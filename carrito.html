@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito | SoloTenisRD | Sneaker Store</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .cart-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 5%;
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--fondo);
+            padding-bottom: 20px;
+        }
+
+        .cart-header h2 {
+            font-size: 2rem;
+            color: var(--texto);
+        }
+
+        .cart-items {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .cart-item {
+            display: grid;
+            grid-template-columns: 100px 1fr auto auto;
+            gap: 20px;
+            align-items: center;
+            padding: 15px;
+            background: var(--blanco);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .cart-item-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .cart-item-info h3 {
+            margin: 0 0 5px 0;
+            color: var(--texto);
+        }
+
+        .cart-item-info p {
+            margin: 3px 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .cart-item-price {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--acento);
+            min-width: 80px;
+            text-align: right;
+        }
+
+        .remove-btn {
+            padding: 8px 16px;
+            background: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .remove-btn:hover {
+            background: #cc0000;
+            transform: scale(1.05);
+        }
+
+        .cart-summary {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 15px;
+            padding: 20px;
+            background: var(--blanco);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .summary-line {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            font-size: 1.1rem;
+        }
+
+        .summary-total {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--acento);
+            padding-top: 15px;
+            border-top: 2px solid var(--fondo);
+        }
+
+        .checkout-btn {
+            padding: 15px 40px;
+            background: var(--acento);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            width: 100%;
+        }
+
+        .checkout-btn:hover {
+            box-shadow: 0 0 20px var(--acento);
+            transform: translateY(-2px);
+        }
+
+        .empty-cart {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-cart h3 {
+            font-size: 1.5rem;
+            color: var(--texto);
+            margin-bottom: 20px;
+        }
+
+        .continue-btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: var(--primario);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+
+        .continue-btn:hover {
+            background: var(--acento);
+        }
+
+        @media (max-width: 768px) {
+            .cart-item {
+                grid-template-columns: 80px 1fr;
+            }
+
+            .cart-item-image {
+                width: 80px;
+                height: 80px;
+            }
+
+            .cart-item-price,
+            .remove-btn {
+                grid-column: 2;
+                justify-self: start;
+            }
+
+            .cart-summary {
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="main-header">
+        <h1 class="main-title">SoloTenis<span>RD</span></h1>
+        <p class="main-slogan">La mejor tienda de tenis en RD</p>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="catalogo.html">Catálogo</a></li>
+                <li><a href="registro.html">Registro</a></li>
+                <li><a href="carrito.html" class="active">Carrito (0)</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="cart-container">
+        <div class="cart-header">
+            <h2>Mi Carrito</h2>
+            <button type="button" class="back-btn" onclick="history.back()" style="margin-bottom: 0;">← Volver</button>
+        </div>
+
+        <div id="cartContent"></div>
+    </main>
+
+    <footer class="main-footer">
+        <p>&copy; 2026 SoloTenisRD - La mejor tienda de tenis en RD.</p>
+        <p>Proyecto: Desarrollo de Aplicaciones Web - UAPA</p>
+    </footer>
+
+    <script src="js/script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const cartContent = document.getElementById('cartContent');
+            const cart = shoppingCart.getCart();
+
+            if (cart.length === 0) {
+                cartContent.innerHTML = `
+                    <div class="empty-cart">
+                        <h3>Tu carrito está vacío</h3>
+                        <p>Aún no has agregado productos. ¡Vuelve al catálogo y encuentra lo que buscas!</p>
+                        <a href="catalogo.html" class="continue-btn">Ver Catálogo</a>
+                    </div>
+                `;
+                return;
+            }
+
+            // Generar HTML del carrito
+            let itemsHTML = '<div class="cart-items">';
+            cart.forEach(product => {
+                itemsHTML += `
+                    <div class="cart-item">
+                        <img src="${product.image}" alt="${product.name}" class="cart-item-image">
+                        <div class="cart-item-info">
+                            <h3>${product.name}</h3>
+                            <p class="category">${product.brand}</p>
+                            <p>ID: ${product.id}</p>
+                        </div>
+                        <div class="cart-item-price">$${product.price}</div>
+                        <button class="remove-btn" onclick="removeFromCart(${product.id})">Eliminar</button>
+                    </div>
+                `;
+            });
+            itemsHTML += '</div>';
+
+            // Calcular total
+            const total = shoppingCart.getTotal();
+
+            // Generar resumen
+            let summaryHTML = `
+                <div class="cart-summary">
+                    <div class="summary-line">
+                        <span>Productos:</span>
+                        <span>${cart.length}</span>
+                    </div>
+                    <div class="summary-line">
+                        <span>Envío:</span>
+                        <span>Gratis</span>
+                    </div>
+                    <div class="summary-total">
+                        <span>Total:</span>
+                        <span>$${total.toLocaleString()}</span>
+                    </div>
+                    <button class="checkout-btn">Proceder al Pago</button>
+                </div>
+            `;
+
+            cartContent.innerHTML = itemsHTML + summaryHTML;
+        });
+
+        function removeFromCart(productId) {
+            shoppingCart.removeProduct(productId);
+            location.reload();
+        }
+    </script>
+</body>
+</html>
